@@ -8,10 +8,8 @@ public class User {
 <<<<<<< HEAD
  * 
  * myeclipse
-=======
  * eclipse
  * 
->>>>>>> branch 'master' of ssh://git@github.com/Heartey/FirstProject.git
  * 
  * 
  * 

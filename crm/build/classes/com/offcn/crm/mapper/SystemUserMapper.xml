@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ 
+<mapper namespace="com.offcn.crm.mapper.SystemUserMapper">
+	<!-- 增 -->
+	<!-- public Long getUsersMaxId(); -->
+	<select id="getUsersMaxId" resultType="long">
+		select MAX(id) from users
+	</select>
+	
+	<!-- public int createUser(User user); -->
+	<insert id="createUser">
+		insert into users(ID,ENABLED,NAME,PASSWORD,ROLE_ID) 
+		values(#{id},#{enabled},#{name},#{password},#{role.id})
+	</insert>
+	
+	<!-- public Long getRoleMaxId(); -->
+	<select id="getRoleMaxId" resultType="long">
+		select MAX(id) from roles
+	</select>
+	
+	<!-- public int createRole(Role role); -->
+	<insert id="createRole">
+		insert into roles(ENABLED,ID,NAME,DESCRIPTION)
+		values(#{enabled},#{id},#{name},#{description})
+	</insert>
+	
+	<!-- 删 -->
+	<!-- public void deleteSystemUserById(Long id); -->
+	<update id="deleteSystemUserById">
+		update users set ENABLED = 0 where id = #{id}
+	</update>
+	
+	<!-- public int deleteRole(Long id); -->
+	<delete id="">
+		delete from roles where id = #{id}
+	</delete>
+	
+	<!-- 改-->
+	<!-- public User getOneById(Long id); -->
+	<select id="getOneById" resultType="com.offcn.crm.bean.User">
+		select u.ID,u.ENABLED,u.NAME,u.PASSWORD,u.ROLE_ID,r.NAME
+		from users u
+		left outer join roles r
+		on u.ROLE_ID = r.ID
+		where u.ID = #{id}
+	</select>
+	
+	<!-- public int createSystemUser(User user); -->
+	<update id="createSystemUser">
+		update users set NAME = #{name},PASSWORD = #{password},ENABLED = #{enabled},ROLE_ID = #{role.id}
+		where id =#{id}
+	</update>
+	
+	<!-- 查 -->
+	<!-- public List<User> getAllUserList(); -->
+	<select id="getAllUserList" resultType="com.offcn.crm.bean.User">
+		select id,enabled,name from users
+	</select>
+	
+	<!-- public List<Role> getAllRoles(); -->
+	<select id="getAllRoles" resultType="com.offcn.crm.bean.Role">
+		select * from roles
+	</select>
+</mapper>

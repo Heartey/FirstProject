@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ 
+<mapper namespace="com.offcn.crm.mapper.SalesChanceMapper">
+	
+	<!-- 获取 SalesChance表全部数据-->
+	<!-- public List<SalesChance> getSalesChanceList(); -->
+	<select id="getSalesChanceList" resultType="com.offcn.crm.bean.SalesChance">
+		select id,cust_name,title,contact,contact_tel,create_date 
+		from sales_chances 
+		where status = 1
+	</select>
+	
+	<!-- 获取 SalesChance表数据总数-->
+	<!-- public int getCountPage() -->
+	<select id="getCountPage" resultType="integer">
+		select count(*) from sales_chances
+		<include refid="querySql"/>
+	</select>
+	
+	<!-- 按index查询 SalesChance表-->
+	<!-- public List<SalesChance> getPageList(int index, int pageSize); -->
+	<select id="getPageList" resultType="com.offcn.crm.bean.SalesChance">
+		 select * from(select rownum rn,id,cust_name,title,contact,contact_tel,create_date 
+                       from sales_chances 
+                       <include refid="querySql"/>) temp
+		 where rn >= #{firstIndex} and rn &lt; #{endIndex}
+	</select>
+	
+	<!-- public int getMaxId();  -->
+	<select id="getMaxId" resultType="integer">
+		select max(id) 
+		from sales_chances
+	</select>
+	
+	<!-- 添加 -->
+	<!-- public int addSalesChance(SalesChance salesChance);  -->
+	<insert id="addSalesChance">
+		insert into sales_chances(ID,contact,contact_tel,create_date,cust_name,description,
+					designee_date,rate,source,title,created_user_id,designee_id)
+    	values(#{id},#{contact},#{contactTel},#{createDate},
+    		   #{custName},#{description},#{designeeDate},
+    		   #{rate},#{source},#{title},
+    		   #{createBy.id},#{createBy.id})
+
+	</insert>
+	
+	<!-- 前删 -->
+	<!-- public int delectSalesPlan(Long id);  -->
+	<delete id="delectSalesPlan">
+		delete from sales_plan where chance_id=#{id}
+	</delete>
+	
+	<!-- 后删 -->
+	<!-- public int delectSalesChance(Long id);  -->
+	<delete id="delectSalesChance">
+		delete from sales_chances where id=#{id}
+	</delete>
+	
+	<!-- (改) public SalesChance updateSalesChance(Long id); -->
+	<resultMap type="com.offcn.crm.bean.SalesChance" id="updateSalesChanceresultMap">
+		
+		<result column="uNAME" property="createBy.name"/>
+	
+	</resultMap>
+	<select id="updateSalesChance" resultMap="updateSalesChanceresultMap">
+		select sc.*,u.NAME uNAME
+	   	FROM sales_chances sc
+	    left outer join users u
+	    on sc.CREATED_USER_ID = u.ID
+	    where sc.id = #{id}
+	</select>
+	<!-- public void updateSamesChance2(SalesChance salesChance); -->
+	<update id="updateSamesChance2">
+		update sales_chances 
+		<set>
+			<if test="source != null source id !=''">
+				source = #{source},
+			</if>
+			<if test="custName != null custName id !=''">
+				cust_name = #{custName},
+			</if>
+			<if test="rate != null">
+				rate = #{rate},
+			</if>
+			<if test="title != null and title !=''">
+				title = #{title},
+			</if>
+			<if test="contact != null contact id !=''">
+				contact = #{contact},
+			</if>
+			<if test="contactTel != null contactTel id !=''">
+				contact_tel = #{contactTel},
+			</if>
+			<if test="description != null description id !=''">
+				description = #{description},
+			</if>
+			<if test="id != null and id !=''">
+				id = #{id}
+			</if>
+		</set>
+	</update>
+	
+	<!-- public int updateDesignee(SalesChance saleschance);  -->
+	<select id="getUserIdByName" resultType="long">
+		select id from users where name = #{name}
+	</select>
+	<update id="updateDesignee">
+		update sales_chances 
+		set DESIGNEE_DATE = #{designeeDate},DESIGNEE_ID = #{designee.id}
+		where id = #{id}
+	</update>
+	
+	<sql id="querySql">
+		<where>
+			status = 1
+			<if test="custName != null and custName != '' and custName != '%%'">
+				and cust_name like #{custName}
+			</if>
+			<if test="title != null and title != '' and title != '%%'">
+				and title like #{title}
+			</if>
+			<if test="contact != null and contact != '' and contact != '%%'">
+				and contact like #{contact}
+			</if>
+		</where>
+	</sql>
+</mapper>

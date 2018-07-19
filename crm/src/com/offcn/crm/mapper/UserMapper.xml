@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ 
+<mapper namespace="com.offcn.crm.mapper.UserMapper">
+	<!-- <select id="getUserByName" resultType="com.offcn.crm.bean.User">
+		select enabled,name,password from users where name=#{username}
+	</select> -->
+
+	<resultMap type="com.offcn.crm.bean.User" id="getUserByNameResultMap">
+		<result property="id" column="uuid"/>
+		<result property="enabled" column="uenabled"/>
+		<result property="name" column="uname"/>
+		<result property="password" column="password"/>
+		
+		<result property="role.id" column="role_id"/>
+		<result property="role.enabled" column="reabled"/>
+		<result property="role.name" column="rname"/>
+		
+		<collection property="role.authorities" ofType="com.offcn.crm.bean.Authority">
+			<result column="aid" property="id"/>
+			<result column="aname" property="name"/>
+			<result column="a_display_name" property="displayName"/>
+			<result column="url" property="url"/>
+			
+			<result column="paid" property="parentAuthority.id"/>
+			<result column="pa_display_name" property="parentAuthority.displayName"/>
+		</collection>
+	</resultMap>
+	<!-- public User getUserByName(String username) -->
+	<select id="getUserByName" resultMap="getUserByNameResultMap">
+		select u.id uuid,u.enabled uenabled,u.name uname,u.password,u.role_id,
+		       r.enabled reabled,r.name rname,
+		       a.id aid,a.name aname,a.display_name a_display_name,a.url,
+		       pa.id paid,pa.display_name pa_display_name
+		from users u
+		left outer join roles r
+		on u.role_id = r.id
+		left outer join role_authority ra
+		on r.id = ra.role_id
+		left outer join authorities a
+		on ra.authority_id = a.id
+		left outer join authorities pa
+		on a.parent_authority_id = pa.id
+		where u.name = #{username}
+	</select>
+</mapper>

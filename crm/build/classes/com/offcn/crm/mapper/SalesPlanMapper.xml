@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ 
+<mapper namespace="com.offcn.crm.mapper.SalesPlanMapper">
+	<!-- public Long getSalesplanMaxIndex(); -->
+	<select id="getSalesplanMaxIndex" resultType="integer">
+		select MAX(ID) from sales_plan
+	</select>
+
+	<!-- public int addSalesplan(SalesPlan salesPlan); -->
+	<insert id="addSalesplan" parameterType="com.offcn.crm.bean.SalesPlan">
+		insert into sales_plan(id,plan_date,TODO)
+		values(#{id},#{date},#{todo})
+	</insert>
+	
+	<!-- 增 -->
+	
+	
+	<!-- 删 -->
+	
+	
+	<!-- 改 -->
+	
+	
+	<!-- 查 -->
+	<!-- public List<SalesChance> getSalesPlanList(); -->
+	<select id="getSalesPlanList" resultType="com.offcn.crm.bean.SalesChance">
+		select id,cust_name,title,contact,contact_tel,create_date 
+		from sales_chances 
+		where status!=1
+	</select>
+	
+	<!-- public List<SalesChance> getSalesPlanById(Integer id); -->
+	<select id="getSalesPlanById" resultType="com.offcn.crm.bean.SalesChance">
+		select sc.*,sp.plan_date,sp.todo
+		   from sales_chances sc
+		   left outer join sales_plan sp
+		   on sc.id = sp.chance_id
+		   where sc.id = #{id}
+	</select>
+	
+</mapper>
